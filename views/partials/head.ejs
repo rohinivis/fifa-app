@@ -1,0 +1,35 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %> — FUT Club</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind (Play CDN — no build step needed for this project) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Map Tailwind's utility classes onto FUT Club's own brand tokens instead of
+  // Tailwind's default palette/fonts, so adopting the library doesn't flatten
+  // the site's identity into generic Tailwind-blue defaults.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          pitch: { black: '#0c1710', dark: '#12241a', line: '#1d3826' },
+          gold: { DEFAULT: '#c9a227', bright: '#e8c860' },
+          card: { navy: '#16243a', deep: '#0c1526' },
+          offwhite: '#eef1ea',
+          muted: '#9aa89e',
+        },
+        fontFamily: {
+          display: ['Teko', 'Georgia', 'serif'],
+          body: ['Inter', 'Segoe UI', 'Arial', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+
+<link rel="stylesheet" href="/css/style.css">

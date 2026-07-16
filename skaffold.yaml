@@ -1,0 +1,51 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: fut-club-app
+
+build:
+  artifacts:
+    - image: rviswanatham1/fut-club-app
+      docker:
+        dockerfile: Dockerfile
+        target: dev
+      sync:
+        # File sync: these paths get copied straight into the running container
+        # instead of triggering a full image rebuild. nodemon (running as the
+        # container's CMD, see Dockerfile's `dev` target) picks up the change
+        # and restarts the app automatically.
+        manual:
+          - src: "views/**/*.ejs"
+            dest: /app
+          - src: "public/**/*"
+            dest: /app
+          - src: "routes/**/*.js"
+            dest: /app
+          - src: "db/**/*.js"
+            dest: /app
+          - src: "server.js"
+            dest: /app
+  local:
+    push: false # kind/minikube/Docker Desktop k8s all use the local image directly
+
+manifests:
+  rawYaml:
+    - k8s/00-namespace.yaml
+    - k8s/01-secret.yaml
+    - k8s/02-configmap.yaml
+    - k8s/03-db-init-configmap.yaml
+    - k8s/10-postgres.yaml
+    - k8s/20-app.yaml
+    # HPA and Ingress are left out of the dev loop on purpose — they don't
+    # need to be recreated/watched on every `skaffold dev` run. Apply them
+    # separately with kubectl if/when you need them locally.
+
+deploy:
+  kubectl: {}
+
+portForward:
+  - resourceType: service
+    resourceName: fut-club-app
+    namespace: fut-club
+    port: 80
+    localPort: 8080

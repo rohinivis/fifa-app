@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Market' }) %>
+</head>
+<body class="bg-pitch-black text-offwhite font-body min-h-screen">
+  <%- include('partials/nav-loader') %>
+
+  <main class="max-w-5xl mx-auto px-6 py-14">
+    <div class="mb-8">
+      <div class="text-gold text-xs uppercase tracking-[0.2em]">Card Market</div>
+      <h1 class="font-display text-5xl uppercase mt-2">Add to Your Squad</h1>
+      <p class="text-muted mt-1"><%= players.length %> card<%= players.length === 1 ? '' : 's' %> available to add</p>
+    </div>
+
+    <% if (added) { %>
+      <div class="bg-[#142f1a] border border-[#2e7a3e] text-[#b4f0c0] px-4 py-3 rounded-sm text-sm mb-6"><%= added %> added to your squad.</div>
+    <% } %>
+
+    <% if (players.length === 0) { %>
+      <p class="text-muted text-sm">You already own every card in the pool. Check back later for new drops.</p>
+    <% } else { %>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+        <% players.forEach(function(p) { %>
+          <% const tier = p.rating >= 85 ? 'tier-gold' : (p.rating >= 75 ? 'tier-silver' : 'tier-bronze'); %>
+          <div class="player-card <%= tier %> bg-gradient-to-br from-card-navy to-card-deep border border-pitch-line rounded-lg p-4 pt-6" data-player-id="<%= p.id %>">
+            <div class="rating-badge absolute top-3.5 left-3.5 w-10 h-10 rounded-full flex items-center justify-center font-mono font-extrabold text-lg"><%= p.rating %></div>
+            <div class="absolute top-4 right-4 text-[0.65rem] uppercase tracking-wide text-muted"><%= p.position %></div>
+            <div class="mt-14 font-semibold text-offwhite"><%= p.name %></div>
+            <div class="text-sm text-muted mt-0.5"><%= p.club %></div>
+            <form action="/market/add/<%= p.id %>" method="POST" class="mt-3">
+              <button type="submit" class="w-full px-3 py-2 text-xs uppercase tracking-wide rounded-sm bg-gradient-to-br from-gold-bright to-gold text-pitch-black font-semibold hover:brightness-110 transition">
+                Add to Squad
+              </button>
+            </form>
+            <button type="button" class="edit-rating-btn w-full mt-2 px-3 py-2 text-xs uppercase tracking-wide rounded-sm border border-gold text-gold-bright hover:bg-gold hover:text-pitch-black transition">
+              Edit Rating
+            </button>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </main>
+
+  <script>
+    // PUT via the CRUD API — protected, requires login (enforced server-side).
+    document.querySelectorAll('.edit-rating-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.player-card');
+        const playerId = card.dataset.playerId;
+        const current = card.querySelector('.rating-badge').textContent;
+        const next = prompt('New rating (1-99):', current);
+        if (next === null) return;
+        try {
+          const updated = await FutClubAPI.updatePlayer(playerId, { rating: Number(next) });
+          card.querySelector('.rating-badge').textContent = updated.rating;
+        } catch (err) {
+          alert(`Error: ${err.message}`);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

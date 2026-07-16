@@ -1,0 +1,27 @@
+/* Supplementary CSS — only the handful of things Tailwind utilities can't express
+   cleanly (the turf-line background texture and the rarity-tier card treatment).
+   Everything else in the app is now styled with Tailwind classes; see
+   views/partials/head.ejs for the brand token mapping. */
+
+body {
+  background-image:
+    repeating-linear-gradient(90deg, transparent, transparent 79px, #1d3826 79px, #1d3826 80px);
+}
+
+/* Rarity tiers, borrowed from FIFA Ultimate Team's own card system: a card's
+   border/glow tier is derived from the player's rating, so the visual grade
+   encodes something real about the data instead of decorating it. */
+.player-card { position: relative; overflow: hidden; }
+.player-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.tier-gold::before   { background: linear-gradient(90deg, #c9a227, #e8c860); }
+.tier-silver::before { background: linear-gradient(90deg, #9aa4ad, #d7dee3); }
+.tier-bronze::before { background: linear-gradient(90deg, #8a5a2e, #b98a52); }
+
+.tier-gold   .rating-badge { background: linear-gradient(160deg, #e8c860, #c9a227); color: #0c1710; }
+.tier-silver .rating-badge { background: linear-gradient(160deg, #d7dee3, #9aa4ad); color: #0c1710; }
+.tier-bronze .rating-badge { background: linear-gradient(160deg, #b98a52, #8a5a2e); color: #eef1ea; }

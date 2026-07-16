@@ -1,0 +1,27 @@
+# Requires an ingress controller (e.g. ingress-nginx) installed in the cluster.
+# Replace host with your real domain, and remove the tls block if you don't have
+# cert-manager / a TLS certificate set up yet.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fut-club-ingress
+  namespace: fut-club
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: fut-club.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fut-club-app
+                port:
+                  number: 80
+  # tls:
+  #   - hosts:
+  #       - fut-club.example.com
+  #     secretName: fut-club-tls

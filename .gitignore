@@ -1,0 +1,22 @@
+# Environment variables (contains SESSION_SECRET, DATABASE_URL, etc.)
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Skaffold / build artifacts
+.skaffold/

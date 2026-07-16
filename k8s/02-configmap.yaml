@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fut-club-config
+  namespace: fut-club
+data:
+  PORT: "3000"

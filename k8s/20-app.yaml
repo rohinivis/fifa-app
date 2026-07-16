@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fut-club-app
+  namespace: fut-club
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fut-club-app
+  template:
+    metadata:
+      labels:
+        app: fut-club-app
+    spec:
+      containers:
+        - name: app
+          # Skaffold overwrites this tag automatically during `skaffold dev`/`skaffold run`.
+          # For manual `kubectl apply` outside Skaffold, this is the last image you pushed.
+          image: rviswanatham1/fut-club-app:1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fut-club-config
+                  key: PORT
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: fut-club-secrets
+                  key: SESSION_SECRET
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: fut-club-secrets
+                  key: DATABASE_URL
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fut-club-app
+  namespace: fut-club
+spec:
+  selector:
+    app: fut-club-app
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP
