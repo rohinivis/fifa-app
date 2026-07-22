@@ -1,5 +1,5 @@
 {
-  "watch": ["server.js", "routes/", "db/"],
+  "watch": ["init/", "migrations/", "website/routes/", "website/views/", "website/components/", "website/functions/"],
   "ext": "js",
-  "ignore": ["views/*", "public/*", "node_modules/*"]
+  "ignore": ["website/public/*", "node_modules/*"]
 }

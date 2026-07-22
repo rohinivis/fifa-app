@@ -19,7 +19,7 @@ COPY --from=dev-deps /app/node_modules ./node_modules
 COPY . .
 ENV PORT=3000
 EXPOSE 3000
-CMD ["npx", "nodemon", "server.js"]
+CMD ["npx", "nodemon", "init/server.js"]
 
 # ---- Runtime stage: what actually ships to production ----
 FROM node:20-alpine AS runtime
@@ -36,4 +36,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 USER app
-CMD ["node", "server.js"]
+CMD ["node", "init/server.js"]

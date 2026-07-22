@@ -1,18 +1,3 @@
-# Auto-generated from db/schema.sql and db/seed.sql — regenerate with
-# scripts/generate-db-init-configmap.sh (or by hand: keep this file's data
-# byte-for-byte in sync with those two source files) any time either one
-# changes, or Postgres will seed a fresh volume with stale data while the
-# app code expects the current schema/seed (this is exactly what happened
-# with plaintext vs. bcrypt-hashed passwords — see git history).
-#
-# Mounted into the Postgres container's /docker-entrypoint-initdb.d/
-# so the schema + seed data load automatically on first startup
-# (only runs when the data volume is empty).
-#
-# NOTE: this only covers the initial schema.sql + seed.sql. If you add new
-# files to db/migrations/, those do NOT auto-run in Kubernetes via this
-# ConfigMap — they only run when something executes `npm run db:init`
-# (e.g. manually via kubectl exec, or the migrate Job — see k8s/README.md).
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,9 +7,9 @@ data:
   01-schema.sql: |
     -- FUT Club schema
     -- NOTE: this file is the INITIAL schema only. It is only ever run once, against
-    -- a fresh database (see db/init.js). Once a database exists, ALL further schema
-    -- changes go into db/migrations/ as new, additive files — this file is never
-    -- edited again. See db/migrations/README.md for the pattern.
+    -- a fresh database (see init/dbInit.js). Once a database exists, ALL further schema
+    -- changes go into migrations/ as new, additive files — this file is never
+    -- edited again. See migrations/README.md for the pattern.
     DROP TABLE IF EXISTS user_players;
     DROP TABLE IF EXISTS players;
     DROP TABLE IF EXISTS teams;
@@ -65,7 +50,7 @@ data:
     -- Test accounts (fake passwords, no real credentials)
     -- Passwords below are bcrypt hashes (10 salt rounds) of the plaintext
     -- passwords shown in README.md's test-account table — NOT plaintext
-    -- themselves. See routes/auth.js, which hashes on signup and compares with
+    -- themselves. See website/routes/auth.js, which hashes on signup and compares with
     -- bcrypt.compare on login.
     INSERT INTO users (username, password, favorite_club) VALUES
       ('messi_fan', '$2b$10$9h/mRQ8N8VZMi01v/n29jugv9SXnFX9RTOoWY7XFf2dPpGRXHm1Ju', 'Inter Miami'),

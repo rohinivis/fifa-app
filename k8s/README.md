@@ -12,10 +12,10 @@ skaffold dev
 What this does:
 - Builds the image once using the `dev` target in the Dockerfile (includes `nodemon`)
 - Deploys everything under `k8s/` except the HPA and Ingress
-- Watches your local files (`server.js`, `routes/`, `db/`, `views/`, `public/`)
+- Watches your local files (`init/`, `website/routes/`, `website/views/`, `website/components/`, `website/functions/`, `website/public/`, `migrations/`)
 - On every save, syncs just that file straight into the running pod — no rebuild
-- `.js` file changes (routes, server.js, db) trigger an automatic `nodemon` restart inside the pod
-- `.ejs`/CSS changes take effect on the next request with no restart at all
+- `.js` file changes (routes, views, server.js, db) trigger an automatic `nodemon` restart inside the pod — views are plain JS modules now, not EJS, so a view edit needs the same restart as any other code change
+- CSS changes take effect on the next request with no restart at all
 - Port-forwards the app to `http://localhost:8080` automatically
 - Streams pod logs straight to your terminal
 - `Ctrl+C` tears everything down cleanly
@@ -28,7 +28,7 @@ for actual releases (see below).
 
 Files added:
 - `Dockerfile`, `.dockerignore` — containerizes the app
-- `routes/index.js` — added a `/healthz` route used by k8s probes
+- `website/routes/index.js` — added a `/healthz` route used by k8s probes
 - `k8s/00-namespace.yaml` — dedicated namespace
 - `k8s/01-secret.yaml` — DB credentials + session secret (edit before applying!)
 - `k8s/02-configmap.yaml` — non-secret app config
@@ -92,7 +92,7 @@ kubectl -n fut-club port-forward svc/fut-club-app 8080:80
 
 ## Notes / things to fix before real production use
 
-- `db/schema.sql` stores plaintext passwords (already flagged in your own
+- `init/schema.sql` stores plaintext passwords (already flagged in your own
   code comment) — worth hashing (bcrypt) before this goes anywhere public.
 - The Postgres StatefulSet init scripts only run **once**, when the data
   volume is empty. To change schema later, use a real migration tool

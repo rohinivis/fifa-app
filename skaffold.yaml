@@ -10,20 +10,20 @@ build:
         dockerfile: Dockerfile
         target: dev
       sync:
-        # File sync: these paths get copied straight into the running container
-        # instead of triggering a full image rebuild. nodemon (running as the
-        # container's CMD, see Dockerfile's `dev` target) picks up the change
-        # and restarts the app automatically.
         manual:
-          - src: "views/**/*.ejs"
+          - src: "website/views/**/*.js"
             dest: /app
-          - src: "public/**/*"
+          - src: "website/components/**/*.js"
             dest: /app
-          - src: "routes/**/*.js"
+          - src: "website/public/**/*"
             dest: /app
-          - src: "db/**/*.js"
+          - src: "website/routes/**/*.js"
             dest: /app
-          - src: "server.js"
+          - src: "website/functions/**/*.js"
+            dest: /app
+          - src: "init/**/*.js"
+            dest: /app
+          - src: "migrations/**/*"
             dest: /app
   local:
     push: false # kind/minikube/Docker Desktop k8s all use the local image directly
@@ -36,10 +36,6 @@ manifests:
     - k8s/03-db-init-configmap.yaml
     - k8s/10-postgres.yaml
     - k8s/20-app.yaml
-    # HPA and Ingress are left out of the dev loop on purpose — they don't
-    # need to be recreated/watched on every `skaffold dev` run. Apply them
-    # separately with kubectl if/when you need them locally.
-
 deploy:
   kubectl: {}
 
